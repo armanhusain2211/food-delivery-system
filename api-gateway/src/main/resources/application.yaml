@@ -1,3 +1,25 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: api-gateway
+
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: restaurant-service
+            uri: lb://RESTAURANT-SERVICE
+            predicates:
+              - Path=/api/restaurants/**
+
+          - id: user-service
+            uri: lb://USER-SERVICE
+            predicates:
+              - Path=/api/users/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

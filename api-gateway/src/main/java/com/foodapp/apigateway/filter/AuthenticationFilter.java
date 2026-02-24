@@ -1,4 +1,24 @@
 package com.foodapp.apigateway.filter;
 
-public class AuthenticationFilter {
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.function.HandlerFilterFunction;
+import org.springframework.web.servlet.function.HandlerFunction;
+import org.springframework.web.servlet.function.ServerRequest;
+import org.springframework.web.servlet.function.ServerResponse;
+
+@Component
+public class AuthenticationFilter implements
+        HandlerFilterFunction<ServerResponse, ServerResponse> {
+
+    @Override
+    public ServerResponse filter(
+            ServerRequest request,
+            HandlerFunction<ServerResponse> next) throws Exception {
+
+        if (!request.headers().header("Authorization").isEmpty()) {
+            return next.handle(request);
+        }
+
+        return ServerResponse.status(401).build();
+    }
 }
