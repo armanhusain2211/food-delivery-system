@@ -2,20 +2,11 @@ server:
   port: 8082
 
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/restaurant_db
-    username: root
-    password: Arman@1981
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
   application:
     name: restaurant-service
+
+  profiles:
+    active: local
 
 eureka:
   client:
