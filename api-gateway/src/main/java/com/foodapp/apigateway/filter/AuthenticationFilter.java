@@ -1,24 +1,33 @@
-//package com.foodapp.apigateway.filter;
-//
-//import org.springframework.stereotype.Component;
-//import org.springframework.web.servlet.function.HandlerFilterFunction;
-//import org.springframework.web.servlet.function.HandlerFunction;
-//import org.springframework.web.servlet.function.ServerRequest;
-//import org.springframework.web.servlet.function.ServerResponse;
-//
-//@Component
-//public class AuthenticationFilter implements
-//        HandlerFilterFunction<ServerResponse, ServerResponse> {
-//
-//    @Override
-//    public ServerResponse filter(
-//            ServerRequest request,
-//            HandlerFunction<ServerResponse> next) throws Exception {
-//
-//        if (!request.headers().header("Authorization").isEmpty()) {
-//            return next.handle(request);
-//        }
-//
-//        return ServerResponse.status(401).build();
-//    }
-//}
+package com.foodapp.apigateway.filter;
+
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+@Component
+public class AuthenticationFilter implements GlobalFilter {
+
+    @Override
+    public Mono<Void> filter(
+            ServerWebExchange exchange,
+            GatewayFilterChain chain) {
+
+        String authHeader =
+                exchange.getRequest()
+                        .getHeaders()
+                        .getFirst("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+            exchange.getResponse()
+                    .setStatusCode(HttpStatus.UNAUTHORIZED);
+
+            return exchange.getResponse().setComplete();
+        }
+
+        return chain.filter(exchange);
+    }
+}
