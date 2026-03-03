@@ -1,7 +1,9 @@
 package com.foodapp.menuservice.service.impl;
 
+import com.foodapp.menuservice.client.RestaurantClient;
 import com.foodapp.menuservice.dto.MenuRequest;
 import com.foodapp.menuservice.dto.MenuResponse;
+import com.foodapp.menuservice.dto.RestaurantResponse;
 import com.foodapp.menuservice.entity.Menu;
 import com.foodapp.menuservice.exception.MenuNotFoundException;
 import com.foodapp.menuservice.mapper.MenuMapper;
@@ -11,13 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
 
     private final MenuRepository menuRepository;
+    private final RestaurantClient restaurantClient;
 
     @Override
     public MenuResponse createMenu(MenuRequest request) {
@@ -27,10 +29,28 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuResponse> getAllMenus() {
+
         return menuRepository.findAll()
                 .stream()
-                .map(MenuMapper::toResponse)
-                .collect(Collectors.toList());
+                .map(menu -> {
+
+                    RestaurantResponse restaurant = null;
+
+                    if (menu.getRestaurantId() != null) {
+                        restaurant =
+                                restaurantClient.getRestaurantById(
+                                        Long.valueOf(menu.getRestaurantId())
+                                );
+                    }
+
+                    return MenuResponse.builder()
+                            .id(menu.getId())
+                            .name(menu.getName())
+                            .restaurantId(menu.getRestaurantId())
+                            .restaurant(restaurant)
+                            .build();
+                })
+                .toList();
     }
 
     @Override
@@ -38,9 +58,25 @@ public class MenuServiceImpl implements MenuService {
 
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() ->
-                        new MenuNotFoundException("Menu not found with id: " + id)
+                        new MenuNotFoundException(
+                                "Menu not found with id: " + id
+                        )
                 );
 
-        return MenuMapper.toResponse(menu);
+        RestaurantResponse restaurant = null;
+
+        if (menu.getRestaurantId() != null) {
+            restaurant =
+                    restaurantClient.getRestaurantById(
+                            Long.valueOf(menu.getRestaurantId())
+                    );
+        }
+
+        return MenuResponse.builder()
+                .id(menu.getId())
+                .name(menu.getName())
+                .restaurantId(menu.getRestaurantId())
+                .restaurant(restaurant)
+                .build();
     }
 }

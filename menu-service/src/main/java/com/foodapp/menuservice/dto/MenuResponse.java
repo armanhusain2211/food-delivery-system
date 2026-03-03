@@ -6,7 +6,9 @@ import lombok.Data;
 @Data
 @Builder
 public class MenuResponse {
+
     private Long id;
-    private String restaurantId;
     private String name;
+    private String restaurantId;
+    private RestaurantResponse restaurant;
 }
