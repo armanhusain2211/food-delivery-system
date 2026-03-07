@@ -1,18 +1,5 @@
-server:
-  port: 8085
-
 spring:
-  datasource:
-    url: jdbc:mysql://mysql-order:3306/order_db
-    username: root
-    password: Arman@1981
+  profiles: prod
 
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://eureka-server:8761/eureka
+server:
+  port: 8083
