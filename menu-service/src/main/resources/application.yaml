@@ -4,3 +4,10 @@ spring:
 
   profiles:
     active: dev
+
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+server:
+  port: 8084
