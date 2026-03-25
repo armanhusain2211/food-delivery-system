@@ -14,4 +14,6 @@ public interface OrderService {
     OrderResponse getOrderById(Long id);
 
     void deleteOrder(Long id);
+
+    void updatePaymentStatus(Long orderId);
 }

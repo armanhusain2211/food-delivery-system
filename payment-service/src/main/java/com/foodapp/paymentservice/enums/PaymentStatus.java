@@ -1,4 +1,7 @@
 package com.foodapp.paymentservice.enums;
 
-public class PaymentStatus {
+public enum PaymentStatus {
+    PENDING,
+    SUCCESS,
+    FAILED
 }

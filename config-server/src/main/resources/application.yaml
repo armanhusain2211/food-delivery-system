@@ -14,6 +14,6 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/arman-foodapp/config-repo
+          uri: https://github.com/armanhusain2211/food-config-repo.git
           default-label: main
           clone-on-start: true

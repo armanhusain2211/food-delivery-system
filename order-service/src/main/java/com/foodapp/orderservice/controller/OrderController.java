@@ -17,43 +17,42 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // CREATE ORDER
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(
             @Valid @RequestBody OrderRequest request) {
 
         OrderResponse response = orderService.createOrder(request);
-
         return ResponseEntity.ok(response);
     }
-
 
     @GetMapping
     public ResponseEntity<List<OrderResponse>> getAllOrders() {
 
         List<OrderResponse> orders = orderService.getAllOrders();
-
         return ResponseEntity.ok(orders);
     }
 
-    // GET ORDER BY ID
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrderById(
             @PathVariable Long id) {
 
         OrderResponse order = orderService.getOrderById(id);
-
         return ResponseEntity.ok(order);
     }
 
-    // DELETE ORDER
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteOrder(
             @PathVariable Long id) {
 
         orderService.deleteOrder(id);
-
         return ResponseEntity.ok("Order deleted successfully");
     }
 
+    @PostMapping("/{orderId}/payment-success")
+    public ResponseEntity<String> updatePaymentStatus(
+            @PathVariable Long orderId) {
+
+        orderService.updatePaymentStatus(orderId);
+        return ResponseEntity.ok("Payment status updated");
+    }
 }

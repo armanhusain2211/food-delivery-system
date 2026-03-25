@@ -3,6 +3,7 @@ package com.foodapp.orderservice.service.impl;
 import com.foodapp.orderservice.dto.OrderRequest;
 import com.foodapp.orderservice.dto.OrderResponse;
 import com.foodapp.orderservice.entity.Order;
+import com.foodapp.orderservice.entity.OrderStatus;
 import com.foodapp.orderservice.mapper.OrderMapper;
 import com.foodapp.orderservice.repository.OrderRepository;
 import com.foodapp.orderservice.service.OrderService;
@@ -49,5 +50,16 @@ public class OrderServiceImpl implements OrderService {
     public void deleteOrder(Long id) {
 
         orderRepository.deleteById(id);
+    }
+
+    @Override
+    public void updatePaymentStatus(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.setStatus(OrderStatus.CONFIRMED);
+
+        orderRepository.save(order);
     }
 }

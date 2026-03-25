@@ -1,4 +1,9 @@
 package com.foodapp.paymentservice.service;
 
-public class PaymentService {
+import com.foodapp.paymentservice.dto.PaymentRequest;
+import com.foodapp.paymentservice.dto.PaymentResponse;
+
+public interface PaymentService {
+
+    PaymentResponse processPayment(PaymentRequest request);
 }
