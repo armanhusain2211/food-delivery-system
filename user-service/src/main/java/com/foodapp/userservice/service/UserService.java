@@ -8,5 +8,7 @@ public interface UserService {
 
     UserResponse getUserByEmail(String email);
 
+    UserResponse getCurrentUser();
+
     LoginResponse login(LoginRequest request);
 }

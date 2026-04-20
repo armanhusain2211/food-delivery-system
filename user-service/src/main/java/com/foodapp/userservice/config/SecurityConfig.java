@@ -26,25 +26,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-
-                        // Public endpoints
-                        .requestMatchers(
-                                "/api/users/register",
-                                "/api/users/login"
-                        ).permitAll()
-
-                        // 🔥 ADMIN endpoint
-                        .requestMatchers("/api/users/admin/**")
-                        .hasRole("ADMIN")
-
-                        // USER + ADMIN endpoints
-                        .requestMatchers("/api/users/**")
-                        .hasAnyRole("USER", "ADMIN")
-
+                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                        .requestMatchers("/api/users/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

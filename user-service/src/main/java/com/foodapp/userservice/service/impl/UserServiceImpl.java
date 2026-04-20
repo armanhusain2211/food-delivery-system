@@ -1,9 +1,6 @@
 package com.foodapp.userservice.service.impl;
 
-import com.foodapp.userservice.dto.LoginRequest;
-import com.foodapp.userservice.dto.LoginResponse;
-import com.foodapp.userservice.dto.UserRequest;
-import com.foodapp.userservice.dto.UserResponse;
+import com.foodapp.userservice.dto.*;
 import com.foodapp.userservice.entity.Role;
 import com.foodapp.userservice.entity.User;
 import com.foodapp.userservice.exception.UserNotFoundException;
@@ -11,9 +8,8 @@ import com.foodapp.userservice.repository.RoleRepository;
 import com.foodapp.userservice.repository.UserRepository;
 import com.foodapp.userservice.service.JwtService;
 import com.foodapp.userservice.service.UserService;
-
 import lombok.RequiredArgsConstructor;
-
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,11 +47,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserByEmail(String email) {
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email.trim())
                 .orElseThrow(() ->
                         new UserNotFoundException("User not found with email: " + email));
 
         return mapToResponse(user);
+    }
+
+    @Override
+    public UserResponse getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getUserByEmail(email);
     }
 
     @Override

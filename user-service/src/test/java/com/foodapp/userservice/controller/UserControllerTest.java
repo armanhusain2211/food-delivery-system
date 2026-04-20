@@ -1,18 +1,17 @@
 package com.foodapp.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.foodapp.userservice.dto.LoginRequest;
-import com.foodapp.userservice.dto.LoginResponse;
-import com.foodapp.userservice.dto.UserRequest;
-import com.foodapp.userservice.dto.UserResponse;
+import com.foodapp.userservice.dto.*;
+import com.foodapp.userservice.filter.JwtFilter;
+import com.foodapp.userservice.service.CustomUserDetailsService;
 import com.foodapp.userservice.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-
+import org.springframework.test.context.TestPropertySource;   // ✅ FIXED
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -22,6 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(properties = {
+        "eureka.client.enabled=false"
+})
 class UserControllerTest {
 
     @Autowired
@@ -30,8 +32,14 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockitoBean
+    @MockBean
     private UserService userService;
+
+    @MockBean
+    private JwtFilter jwtFilter;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void testRegisterUser() throws Exception {
