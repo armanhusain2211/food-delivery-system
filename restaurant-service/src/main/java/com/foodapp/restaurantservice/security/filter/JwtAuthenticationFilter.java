@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -33,31 +35,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
 
             try {
-
                 String token = header.substring(7);
 
-                String username =
-                        jwtUtil.extractUsername(token);
+                if (jwtUtil.validateToken(token)) {
 
-                if (username != null &&
-                        SecurityContextHolder.getContext()
-                                .getAuthentication() == null) {
+                    String username = jwtUtil.extractUsername(token);
+
+                    List<?> rolesRaw = jwtUtil.extractRoles(token);
+
+                    Collection<SimpleGrantedAuthority> authorities =
+                            rolesRaw.stream()
+                                    .map(Object::toString)
+                                    .map(SimpleGrantedAuthority::new)
+                                    .collect(Collectors.toList());
+
+                    System.out.println("Authorities => " + authorities);
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
                                     username,
                                     null,
-                                    List.of(
-                                            new SimpleGrantedAuthority("ROLE_USER")
-                                    )
+                                    authorities
                             );
 
-                    SecurityContextHolder
-                            .getContext()
-                            .setAuthentication(auth);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
                 }
 
             } catch (Exception e) {
+                e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
